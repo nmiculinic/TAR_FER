@@ -1,2 +1,2 @@
 # TAR_FER
-Text analysis and retrial project, Spring 2017
+Text analysis and retrieval project, Spring 2017
