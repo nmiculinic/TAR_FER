@@ -1,0 +1,74 @@
+\documentclass[times, utf8]{article}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{listings}
+\usepackage{xcolor}
+\newcommand\myworries[1]{\textcolor{red}{#1}}
+\usepackage{hyperref} 
+\usepackage{natbib}
+\usepackage{subfig}
+\usepackage{color}
+\usepackage{placeins}
+\usepackage[T1]{fontenc}
+
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color
+  basicstyle=\footnotesize,        % size of fonts used for the code
+  breaklines=true,                 % automatic line breaking only at whitespace
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  keywordstyle=\color{blue},       % keyword style
+  stringstyle=\color{mymauve},     % string literal style
+}
+
+
+\begin{document}
+
+\title{\textbf{Semantic textual similarity}}
+\date{March, 2017}
+\author{Bruno Gavranovi\'c, Neven Miculini\'c and Stipan Mikuli\'c}
+\maketitle
+
+\section*{Topic description}
+
+Semantic textual similarity (STS) measures how similar two text snippets are. The task is, given two sentences, to determine their similarity score on a continuous scale from 0 to 5. The score of 5 denotes a perfect semantic equivalence. This task was offered in multiple tracks, covering various cross-lingual and monolingual pairs. Your task, however, is the track concerned with English monolingual pairs. Of course, you are encouraged to give a shot on other tracks as well.
+\section*{Project plan}
+First and foremost we want to merge together the data from different sources and build vocabulary. We plan to develop simple baseline first and then build upon that.
+After reading referenced papers we decided that our pipeline will look something like the following:
+
+\begin{enumerate}
+\item Data preprocessing
+
+\begin{itemize}
+\item Tokenization
+\item POS tagging
+\item Parsing (syntax)
+\item ...
+\end{itemize}
+
+\item Transforming data to corresponding input for models
+\begin{itemize}
+\item N-gram overlap
+\item TF-IDF vector
+\item Paragraph2Vec
+\end{itemize}
+
+
+\item Building different models
+\begin{itemize}
+\item LSTM neural network
+\item SVM
+\item Linear Regression
+\end{itemize}
+
+\item Evaluation
+\end{enumerate}
+
+We will make baseline model as centroid vector of word embeddings from sentence.
+\end{document}
