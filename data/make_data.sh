@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 for ff in sts2017.gs.zip sts2017.eval.v1.1.zip; do
 	if [[ ! -f $ff ]]; then
 		curl http://alt.qcri.org/semeval2017/task1/data/uploads/$ff -o $ff
