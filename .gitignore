@@ -1,7 +1,8 @@
 # Added by bgavran
 .idea
 data/
-!data/makedata.sh
+!data/make_eval_data.sh
+!data/make_embedding.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
