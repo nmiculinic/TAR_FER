@@ -5,6 +5,10 @@ import utils  # Sets up useful loggers
 from data import base
 import shutil
 from time import localtime, strftime
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+sns.set(style="darkgrid", color_codes=True)
 
 
 class Model():
@@ -55,4 +59,11 @@ class Model():
             scores.append(score)
         r = pearsonr(scores, eval_set.target)[0]
         self.logger.info("Correlation coefficient %.3f", r)
+        df = pd.DataFrame.from_dict({
+            "model": scores,
+            "target": eval_set.target
+        })
+
+        g = sns.jointplot(x="target", y="model", data=df, kind="reg", color="r", size=7)
+        g.savefig(os.path.join(self.logdir, 'correlation.png'))
         return r
