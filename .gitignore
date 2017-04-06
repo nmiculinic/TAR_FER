@@ -1,6 +1,5 @@
 # Added by bgavran
 .idea
-data/
 !data/make_eval_data.sh
 !data/make_embedding.sh
 

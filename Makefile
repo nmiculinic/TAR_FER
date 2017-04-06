@@ -4,7 +4,8 @@ paper/main.pdf: paper/main.tex
 	cd paper && latexmk -pdf main.tex
 
 data: FORCE
-	cd data && ./make_data.sh
+	python3 data/make_data.py
+
 FORCE:
 
 
