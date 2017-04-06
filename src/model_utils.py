@@ -1,19 +1,28 @@
 import os
 import logging
 from scipy.stats import pearsonr
-import utils
-import logging
+import utils  # Sets up useful loggers
 from data import base
+import shutil
+from time import localtime, strftime
+
 
 class Model():
     def __init__(self, logdir, dataset, config):
         self.training_set = dataset
-
         if not os.path.isabs(logdir):
             self.logdir = os.path.join(base, 'log', logdir)
         self.logger = logging.getLogger(os.path.split(logdir)[-1])
         if os.path.exists(self.logdir):
             self.logger.warn("Logdir %s exists", self.logdir)
+            if config.get("log_overwrite", False):
+                self.logger.warn("Overwriting logdir %s", self.logdir)
+                shutil.rmtree(self.logdir)
+            else:
+                self.logdir += strftime(".%B_%d__%H:%M", localtime())
+                self.logger.warn("Renamed logdir to %s", self.logdir)
+                self.logger = logging.getLogger(os.path.split(self.logdir)[-1])
+
         os.makedirs(self.logdir, exist_ok=True)
         self.logger.info("Initialized model; logdir %s", self.logdir)
         fh = logging.FileHandler(os.path.join(self.logdir, 'model.log'))
