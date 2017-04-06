@@ -38,11 +38,12 @@ def maybeDownload(url, fname):
 
         def reporthook(blocknum, blocksize, totalsize):
             readsofar = blocknum * blocksize
-            bar.update(readsofar)
             if totalsize > 0:
                 bar.maxval = totalsize
+                readsofar = min(readsofar, totalsize)
             else:
                 bar.maxval = progressbar.UnknownLength
+            bar.update(readsofar)
 
         logger.info("Downloading from %s to %s", url, fname)
         bar.start()

@@ -1,5 +1,7 @@
 import os
 
+__all__ = ["proj_path"]
+
 
 class ProjectPath:
     base = os.path.dirname(os.path.dirname(__file__))
