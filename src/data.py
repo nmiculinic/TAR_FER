@@ -28,27 +28,17 @@ eval_data_out_path = os.path.join(base, os.environ["EVAL_OUT"])
 
 
 class DataSet:
-    def __init__(self, in_file, target_file, sentence_preprocess_fn=None):
-        if sentence_preprocess_fn is not None:
-            self.preprocessLine = sentence_preprocess_fn
-
+    def __init__(self, in_file, target_file, name):
         with open(target_file) as fn:
-            # Dividing target with 5 to get it in the [0, 1] range
             self.target = np.array([float(val) for val in fn.readlines()])
 
         with open(in_file) as fn:
-            inp = [pair.strip().split("\t") for pair in fn.readlines()]
-            self.raw_input = deepcopy(inp)
-            for i, pair in enumerate(inp):
-                inp[i][0] = self.preprocessLine(pair[0])
-                inp[i][1] = self.preprocessLine(pair[1])
-            self.input = inp
+            self.input = [pair.strip().split("\t") for pair in fn.readlines()]
 
-    def preprocessLine(self, sentence):
-        raise NotImplemented
+        self.name = name
 
 
-eval_ds = DataSet(eval_data_in_path, eval_data_out_path, nltk.word_tokenize)
+eval_ds = DataSet(eval_data_in_path, eval_data_out_path, "Eval dataset")
 
 try:
     word2vec = gensim.models.KeyedVectors.load_word2vec_format(w2v_path, binary=False, limit=10000)
@@ -66,8 +56,5 @@ try:
             except KeyError:
                 pass
         return np.array(embedding)
-
-    w2w_ds = DataSet(eval_data_in_path, eval_data_out_path, lambda x: sentence_to_vector(nltk.word_tokenize(x)))
-
 except FileNotFoundError:
     logger.error("Cannot find w2v path %s", w2v_path, exc_info=False)

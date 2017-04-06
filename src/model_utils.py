@@ -6,8 +6,8 @@ logging.basicConfig(level=logging.DEBUG, format=log_fmt)
 
 
 class Model():
-    def __init__(self, logdir, training_set, config):
-        self.training_set = training_set
+    def __init__(self, logdir, dataset, config):
+        self.training_set = dataset
         self.logdir = logdir
         self.logger = logging.getLogger(os.path.split(logdir)[-1])
         self.logger.info("Initialized model")
@@ -19,16 +19,19 @@ class Model():
         raise NotImplemented
 
     def predict(self, sa, sb):
-        sa = self.training_set.preprocessLine(sa)
-        sb = self.training_set.preprocessLine(sb)
+        sa = self.preprocessLine(sa)
+        sb = self.preprocessLine(sb)
         return self._predict(sa, sb)
+
+    def preprocessLine(self, sentence):
+        raise NotImplemented
 
     def evalScore(self, eval_set=None):
         if eval_set is None:
-            self.logger.info("Evaluating on train set")
             eval_set = self.training_set
+        self.logger.info("Evaluating on %s", eval_set.name)
         scores = []
-        for sentences in eval_set.raw_input:
+        for sentences in eval_set.input:
             score = self.predict(*sentences)
             self.logger.debug("%s %s --> %.3f", sentences[0], sentences[1], score)
             scores.append(score)

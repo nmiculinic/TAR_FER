@@ -13,5 +13,8 @@ class SimpleBaseline(Model):
         b = {SimpleBaseline.porter.stem(x) for x in b}
         return len(a & b) / len(a | b)
 
+    def preprocessLine(self, sentence):
+        return nltk.word_tokenize(sentence)
+
 model = SimpleBaseline("log", eval_ds, {})
 model.evalScore()
