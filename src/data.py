@@ -1,6 +1,6 @@
 import gensim
-import nltk
 import logging
+import utils
 
 """
 If you get this error after importing gensim:
@@ -12,11 +12,10 @@ from the command line and it magically fixes it.
 import numpy as np
 import os
 from dotenv import load_dotenv
-from copy import deepcopy
 
 logger = logging.getLogger(__file__)
 
-base = os.path.dirname(os.path.dirname(__file__))
+base = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 load_dotenv(os.environ.get(
     "TAR_DATA_ENV",
     os.path.join(base, 'src', 'local.env')

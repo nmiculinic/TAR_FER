@@ -1,16 +1,25 @@
 import os
 import logging
 from scipy.stats import pearsonr
-log_fmt = '\r[%(levelname)s] %(name)s: %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=log_fmt)
-
+import utils
+import logging
+from data import base
 
 class Model():
     def __init__(self, logdir, dataset, config):
         self.training_set = dataset
-        self.logdir = logdir
+
+        if not os.path.isabs(logdir):
+            self.logdir = os.path.join(base, 'log', logdir)
         self.logger = logging.getLogger(os.path.split(logdir)[-1])
-        self.logger.info("Initialized model")
+        if os.path.exists(self.logdir):
+            self.logger.warn("Logdir %s exists", self.logdir)
+        os.makedirs(self.logdir, exist_ok=True)
+        self.logger.info("Initialized model; logdir %s", self.logdir)
+        fh = logging.FileHandler(os.path.join(self.logdir, 'model.log'))
+        fh.setLevel(logging.DEBUG)
+        fh.setFormatter(logging.Formatter(utils.log_fmt))
+        self.logger.addHandler(fh)
 
     def train(self, num_steps):
         raise NotImplemented
