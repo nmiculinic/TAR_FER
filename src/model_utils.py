@@ -5,7 +5,6 @@ import utils  # Sets up useful loggers
 from data import base
 import shutil
 from time import localtime, strftime
-import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
@@ -35,7 +34,7 @@ class Model():
         fh.setFormatter(logging.Formatter(utils.log_fmt))
         self.logger.addHandler(fh)
 
-    def train(self, num_steps):
+    def train(self, train_x, train_y, num_steps):
         raise NotImplemented
 
     def _predict(self, sa, sb):

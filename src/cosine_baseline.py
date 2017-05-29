@@ -1,6 +1,4 @@
-import matplotlib.pyplot as plt
 from sklearn.metrics.pairwise import cosine_similarity
-import pandas as pd
 import nltk
 import numpy as np
 from data import eval_ds, sentence_to_vector
