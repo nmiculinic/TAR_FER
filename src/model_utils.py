@@ -1,6 +1,6 @@
 import os
 import logging
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, spearmanr
 import utils  # Sets up useful loggers
 from data import base
 import shutil
@@ -11,7 +11,7 @@ import pandas as pd
 sns.set(style="darkgrid", color_codes=True)
 
 
-class Model():
+class Model:
     def __init__(self, logdir, dataset, config):
         self.training_set = dataset
         if not os.path.isabs(logdir):
@@ -41,14 +41,14 @@ class Model():
         raise NotImplemented
 
     def predict(self, sa, sb):
-        sa = self.preprocessLine(sa)
-        sb = self.preprocessLine(sb)
+        sa = self.preprocess_line(sa)
+        sb = self.preprocess_line(sb)
         return self._predict(sa, sb)
 
-    def preprocessLine(self, sentence):
+    def preprocess_line(self, sentence):
         raise NotImplemented
 
-    def evalScore(self, eval_set=None):
+    def eval_score(self, eval_set=None):
         if eval_set is None:
             eval_set = self.training_set
         self.logger.info("Evaluating on %s", eval_set.name)

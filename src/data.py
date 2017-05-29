@@ -41,6 +41,7 @@ eval_ds = DataSet(eval_data_in_path, eval_data_out_path, "Eval dataset")
 try:
     word2vec = gensim.models.KeyedVectors.load_word2vec_format(w2v_path, binary=False, limit=10000)
 
+
     def sentence_to_vector(sentence):
         """
 
