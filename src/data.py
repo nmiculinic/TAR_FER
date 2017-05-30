@@ -1,7 +1,3 @@
-import gensim
-import logging
-import utils
-
 """
 If you get this error after importing gensim:
 "Intel MKL FATAL ERROR: Cannot load libmkl_avx2.so or libmkl_def.so"
@@ -9,9 +5,12 @@ try running:
 conda install -f numpy
 from the command line and it magically fixes it.
 """
+import gensim
+import logging
 import numpy as np
 import os
 from dotenv import load_dotenv
+
 
 logger = logging.getLogger(__file__)
 
@@ -41,6 +40,7 @@ eval_ds = DataSet(eval_data_in_path, eval_data_out_path, "Eval dataset")
 
 try:
     word2vec = gensim.models.KeyedVectors.load_word2vec_format(w2v_path, binary=False, limit=10000)
+
 
     def sentence_to_vector(sentence):
         """
