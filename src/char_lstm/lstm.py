@@ -40,8 +40,8 @@ class LSTM(Model):
     def _predict(self, a, b):
         final_state1 = self.eval_sess.run(self.final_state, feed_dict={self.x: a})
         final_state2 = self.eval_sess.run(self.final_state, feed_dict={self.x: b})
-        sem1 = final_state1[1].flatten().reshape(1, -1)
-        sem2 = final_state2[1].flatten().reshape(1, -1)
+        sem1 = final_state1[-1].flatten().reshape(1, -1)
+        sem2 = final_state2[-1].flatten().reshape(1, -1)
         return cosine_similarity(sem1, sem2)[0, 0]
 
     def preprocess_line(self, sentence):

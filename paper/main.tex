@@ -12,6 +12,8 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
+\graphicspath{{img/}}
+
 \title{Semantic Textual Similarity using deep learning}
 
 \name{Bruno Gavranovic, Neven Miculinic, Stipan Mikulic}
@@ -19,12 +21,16 @@
 \address{
 University of Zagreb, Faculty of Electrical Engineering and Computing\\
 Unska 3, 10000 Zagreb, Croatia\\
-\texttt{\{bgavran3,neven.miculinic,?stipan?\}@gmail.com}\\
+\texttt{\{bruno.gavranovic,neven.miculinic,stipan.mikulic\}@fer.hr}\\
 }
 
 
 \abstract{
-In this paper we present our work on Semantic Textual Similarity (STS) problem during Text analysis and retrival (TAR) class at FER. STS measure semantic similarity between two sentences. Datasets were obtained using human annotators and their average semantic similarity score is given. We use both Pearson and Spearman correlation coefficient in our analysis and acchine 1.000, and 1.000 on our test set respectively.
+In this paper we present our work on Semantic Textual Similarity (STS) problem during Text analysis and retrival (TAR) class at FER. 
+STS measures semantic similarity between two sentences. 
+We use two approaches: an SVM model with feature preprocessing and a deep learning model trained on a language modelling task.
+Datasets were obtained using human annotators and their average semantic similarity score is given. 
+We use both Pearson and Spearman correlation coefficient in our analysis and achieve 1.000, and 1.000 on our test set respectively.
 }
 
 \begin{document}
@@ -32,6 +38,8 @@ In this paper we present our work on Semantic Textual Similarity (STS) problem d
 \maketitleabstract
 
 \section{Introduction}
+
+STS has many applications in NLP bla bla bla
 
 This section is the introduction to your paper. Introduction should not be too elaborate, as that is what other sections are for (the Introduction should definitely not spill over to the second page).
 
@@ -41,36 +49,21 @@ This is the second paragraph of the introduction. In \LaTeX , paragraphs are sep
 
 STS has short and fruitful history, one with many ideas flying around. In its current form it appeared in 2012, on SemVal~\citep{agirre2012semeval} as task 6.  In 2012, the best system~\citep{bar2012ukp} used lexical similarity and Explicit Semantic Analysis(ESA)~\citep{gabrilovich2007computing}. Following year Latent Semantic Analysis(LSA)~\citep{deerwester1990indexing} model~\citep{han2013umbc} with additional external information sources, WordNet and n-gram matching technique.
 
-Following two years~\citep{sultan2014dls} and~\citep{sultan2015dls} dominate the competition with new algorightm -- they align the words between new sentences. Other notable approaches come from logic side, it's representative paper being~\citep{beltagy2014probabilistic}.
-
-\subsection{First subsection}
-\label{sec:first}
-
-This is a subsection of the second section.
-
-\subsection{Second subsection}
-
-This is the second subsection of the second section. Referencing the (sub)sections in text is performed as follows: ``in Section~\ref{sec:first} we have shown \dots''.
-
-\subsubsection{Sub-subsection example}
-
-This is a sub-subsection. If possible, it is better to avoid sub-subsections.
+Following two years~\citep{sultan2014dls} and~\citep{sultan2015dls} dominate the competition with new algorithm -- they align the words between new sentences. Other notable approaches come from logic side, its representative paper being~\citep{beltagy2014probabilistic}.
 
 \section{Extent of the paper}
 
-The paper should have a minimum of 3 and a maximum of 4 pages, plus an additional page for references.
+Our contribution consists of implementation of two machine learning models: SVM model and a deep learning model.
 
-\section{Figures and tables}
+\subsection{SVM}
 
-\subsection{Figures}
-
-Here is an example on how to include figures in the paper. Figures are included in \LaTeX{} code immediately \textit{after} the text in which these figures are referenced. Allow \LaTeX{} to place the figure where it believes is best (usually on top of the page of at the position where you would not place the figure). Figures are referenced as follows: ``Figure~\ref{fig:figure1} shows \dots''. Use tilde (\verb.~.) to prevent separation between the word ``Figure'' and its enumeration.
+\subsection{Deep learning}
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=\columnwidth]{drawing.pdf}
-\caption{This is the figure caption. Full sentences should be followed with a dot. The caption should be placed \textit{below} the figure. Caption should be short; details should be explained in the text.}
-\label{fig:figure1}
+\includegraphics[width=\columnwidth]{only_2nd_layer.png}
+\caption{Depiction of blabla}
+\label{fig:lstm_2nd_layer}
 \end{center}
 \end{figure}
 

@@ -1,7 +1,7 @@
 import os
 from src.char_lstm.lstm import LSTM
 from src.char_lstm.proj_path import project_path
-from src.char_lstm.text import Text
+from src.char_lstm.onehot import OneHot
 from data import eval_ds
 
 from nltk.corpus import webtext, abc, gutenberg
@@ -12,7 +12,7 @@ from nltk.corpus import webtext, abc, gutenberg
 # file_list = [webtext.raw("overheard.txt"), abc.raw("rural.txt"), gutenberg.raw("carroll-alice.txt")]
 file_list = [gutenberg.raw(file) for file in gutenberg.fileids()]
 # file = webtext.raw("overheard.txt")
-task = Text(file_list)
+task = OneHot(file_list)
 
 
 class Hp:

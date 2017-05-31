@@ -2,9 +2,11 @@ import os
 import numpy as np
 from src.char_lstm.proj_path import project_path
 
+
 def flatten(x): return [x for x in x for x in x]
 
-class Text:
+
+class OneHot:
     def __init__(self, file_list):
         self.file_list = file_list
         self.files_train, self.files_test = [], []
