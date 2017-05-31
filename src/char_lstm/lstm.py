@@ -38,8 +38,10 @@ class LSTM(Model):
             self.eval_score()
 
     def _predict(self, a, b):
-        sem1 = self.eval_sess.run(self.final_state, feed_dict={self.x: a}).flatten().reshape(1, -1)
-        sem2 = self.eval_sess.run(self.final_state, feed_dict={self.x: b}).flatten().reshape(1, -1)
+        final_state1 = self.eval_sess.run(self.final_state, feed_dict={self.x: a})
+        final_state2 = self.eval_sess.run(self.final_state, feed_dict={self.x: b})
+        sem1 = final_state1[1].flatten().reshape(1, -1)
+        sem2 = final_state2[1].flatten().reshape(1, -1)
         return cosine_similarity(sem1, sem2)[0, 0]
 
     def preprocess_line(self, sentence):
@@ -104,17 +106,18 @@ class LSTM(Model):
         print("This model has", n_vars, "parameters!")
 
         with tf.Session() as sess:
+            self.eval_sess = sess
             graph = sess.graph
             getopt = graph.get_operation_by_name
             getten = graph.get_tensor_by_name
 
             opt = getopt("optimizer")
             loss = getopt("loss").outputs[0]
-            x = getopt("x").outputs[0]
+            self.x = getopt("x").outputs[0]
             merged = getopt("merged").outputs[0]
             one_char = getopt("one_char").outputs[0]
             # initial_state = getopt("initial_state").outputs[0]
-            final_state = getopt("final_state").outputs[0]
+            self.final_state = getopt("final_state").outputs[0]
 
             if restore_path is not None:
                 self.saver.restore(sess, restore_path)
@@ -128,17 +131,18 @@ class LSTM(Model):
             t = time()
 
             print("Starting...")
+            scores_list = []
             for step in range(hp.steps + 1):
                 data_batch = self.task.next_batch(batch_size=hp.batch_size, seq_len=hp.seq_len)
 
-                _, cost_value = sess.run([opt, loss], feed_dict={x: data_batch})
+                _, cost_value = sess.run([opt, loss], feed_dict={self.x: data_batch})
 
                 if step % 100 == 0:
-                    summary = sess.run(merged, feed_dict={x: data_batch})
+                    summary = sess.run(merged, feed_dict={self.x: data_batch})
                     train_writer.add_summary(summary, step)
 
                     test_data_batch = self.task.next_batch(batch_size=hp.batch_size, seq_len=hp.seq_len, test=True)
-                    test_summary = sess.run(merged, feed_dict={x: test_data_batch})
+                    test_summary = sess.run(merged, feed_dict={self.x: test_data_batch})
                     test_writer.add_summary(test_summary, step)
 
                     print("\n ------------------------------- \n")
@@ -147,10 +151,12 @@ class LSTM(Model):
                     print("\n ------------------------------- \n")
                     t = time()
 
-                    sentence, _ = self.task.sample_text(sess, one_char, final_state, x, initial_state,
+                    sentence, _ = self.task.sample_text(sess, one_char, self.final_state, self.x, initial_state,
                                                         length=4 * hp.seq_len)
                     print(sentence)
 
                     if step % 1000 == 0:
                         self.saver.save(sess, project_path.model_path, global_step=step)
                         print("Model saved!")
+                        scores_list.append(self.eval_score())
+                        print(scores_list)

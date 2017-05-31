@@ -10,19 +10,20 @@ from nltk.corpus import webtext, abc, gutenberg
 # file = Text.open_file(file_name)
 
 # file_list = [webtext.raw("overheard.txt"), abc.raw("rural.txt"), gutenberg.raw("carroll-alice.txt")]
-file = webtext.raw("overheard.txt")
-task = Text(file)
+file_list = [gutenberg.raw(file) for file in gutenberg.fileids()]
+# file = webtext.raw("overheard.txt")
+task = Text(file_list)
 
 
 class Hp:
     lstm_memory_size = 512
     out_vector_size = task.num_chars
-    n_layers = 2
+    n_layers = 3
     temp = 0.7
 
     batch_size = 128
-    seq_len = 64
-    steps = 10000
+    seq_len = 128
+    steps = 100000
 
 
 model_info = ["log_lstm", eval_ds, {"log_overwrite:": True}]
