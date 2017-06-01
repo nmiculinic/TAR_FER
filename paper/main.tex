@@ -26,10 +26,10 @@ Unska 3, 10000 Zagreb, Croatia\\
 
 
 \abstract{
-In this paper we present our work on Semantic Textual Similarity (STS) problem during Text analysis and retrival (TAR) class at FER. 
-STS measures semantic similarity between two sentences. 
+In this paper we present our work on Semantic Textual Similarity (STS) problem during Text analysis and retrival (TAR) class at FER.
+STS measures semantic similarity between two sentences.
 We use two approaches: an SVM model with feature preprocessing and a deep learning model trained on a language modelling task.
-Datasets were obtained using human annotators and their average semantic similarity score is given. 
+Datasets were obtained using human annotators and their average semantic similarity score is given.
 We use both Pearson and Spearman correlation coefficient in our analysis and achieve 1.000, and 1.000 on our test set respectively.
 }
 
@@ -39,11 +39,51 @@ We use both Pearson and Spearman correlation coefficient in our analysis and ach
 
 \section{Introduction}
 
-STS has many applications in NLP bla bla bla
+\begin{verbatim}
+Two dogs play in the grass.
+Two dogs playing in the snow.
+\end{verbatim}
 
-This section is the introduction to your paper. Introduction should not be too elaborate, as that is what other sections are for (the Introduction should definitely not spill over to the second page).
+At the heart of STS, semantic textual similarity, is assigning numerical score on two text similarity. By text, it could mean full document, paragraph, or in this paper's case only one sentence. Beginning quote showcases one such sentance pairs, where human annotators rated 2.8 semantically similar on 0-5 scale. Full score semantics you can read in table~\ref{tab:sts-score}
 
-This is the second paragraph of the introduction. In \LaTeX , paragraphs are separated by inserting an empty line in between them.  Avoid very large paragraphs (larger than half of the page height), but also avoid tiny paragraphs (e.g., one-sentence paragraphs).
+\begin{table*}
+\caption{STS score description, adapted from~\citep{agirre2016semeval}}
+\label{tab:sts-score}
+\begin{center}
+\begin{tabular}{llr}
+\toprule
+Score & Explanation\\
+\midrule
+5 & \textit{Two sentences are completely equivalent}\\
+& The bird is bathing in the sink\\
+& Birdie is washing itself in the water basin.\\
+\midrule
+4 & \textit{The two sentences are mostly equivalent, but some unimportant details differ}\\
+& In May 2010, the troops attempted to invade
+Kabul. \\
+& The US army invaded Kabul on May 7th last
+year, 2010.\\
+\midrule
+3 & \textit{The two sentences are roughly equivalent, but some important information differs/missing.}\\
+& John said he is considered a witness but not a
+suspect.\\
+& ``He is not a suspect anymore.'' John said.\\
+\midrule
+2 & \textit{The two sentences are not equivalent, but share some details.} \\
+&They flew out of the nest in groups. \\
+&They flew into the nest together. \\
+\midrule
+1 & \textit{The two sentences are not equivalent, but are on the same topic.}\\
+& The woman is playing the violin.\\
+& The young lady enjoys listening to the guitar.\\
+\midrule
+0 & \textit{The two sentences are completely dissimilar.}\\
+& John went horse back riding at dawn with a whole group of friends.\\
+& Sunrise at dawn is a magnificent view to take in if you wake up early enough for it.\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table*}
 
 \section{Related work}
 
