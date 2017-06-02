@@ -20,9 +20,9 @@ load_dotenv(os.environ.get(
     os.path.join(base, 'src', 'local.env')
 ))
 
-w2v_path = os.path.join(base, os.environ['W2V_PATH'])
-eval_data_in_path = os.path.join(base, os.environ["EVAL_IN"])
-eval_data_out_path = os.path.join(base, os.environ["EVAL_OUT"])
+w2v_path = os.path.join(base, os.environ.get('W2V_PATH', ""))
+eval_data_in_path = os.path.join(base, os.environ.get("EVAL_IN", ""))
+eval_data_out_path = os.path.join(base, os.environ.get("EVAL_OUT", ""))
 
 
 class DataSet:
