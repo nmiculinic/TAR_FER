@@ -12,7 +12,7 @@ from sklearn.svm import SVR
 from nltk.stem import WordNetLemmatizer
 from nltk import FreqDist
 from nltk.corpus import brown, wordnet
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, spearmanr
 
 
 wordnet_lemmatizer = WordNetLemmatizer()
@@ -97,7 +97,7 @@ def get_numbers_feature(sentence1, sentence2):
 def get_shallow_features(sentence):
     counter = 0
     for word in sentence:
-        if len(word) > 1 and (re.match("[A-Z].*]", word) or re.match("\.[A-Z]+]", word)):
+        if len(word) > 1 and re.match("[A-Z].*]", word):
             counter += 1
     return counter
 
@@ -140,6 +140,8 @@ def weighted_word_coverage(s1, s2):
 
 
 def harmonic_mean(s1, s2):
+    if s1 == 0 or s2 == 0:
+        return 0
     return s1*s2/(s1+s2)
 
 
@@ -200,8 +202,7 @@ def feature_vector(a, b):
     # Weighted word overlap -
     fvec.append(harmonic_mean(weighted_word_coverage(a, b),
                                       weighted_word_coverage(b, a)))
-
-    # sentence num_of_words differences - lagano
+    # sentence num_of_words differences -
     fvec.append(abs(len(a) - len(b)))
 
     # summed word embeddings - lagano
@@ -230,6 +231,7 @@ class SVMModel:
         parameters = {'kernel': ['linear', 'rbf'], 'C': [2 ** i for i in range(-7, 7)],
                       'gamma': [10 ** i for i in range(-5, 3)]}
         svc = GridSearchCV(SVR(), parameters, n_jobs=-1, cv=5)
+
         svc.fit(self.scaler.fit_transform(new_train), train_y)
         self.model = svc.best_estimator_
         print(svc.get_params())
@@ -237,29 +239,29 @@ class SVMModel:
     def predict(self, x):
         predictions = []
         for i in x:
-            predictions.append(self.predict_one(i))
+            predictions.append(self.predict_one(i)[0])
         return predictions
 
     def predict_one(self, x):
-        fvec = feature_vector(get_words(x[0]), get_words(x[1]))
+        fvec = feature_vector(x[0], x[1])
         return self.model.predict(self.scaler.transform(fvec))
 
-    def eval_score(self, y_predicted, y_true):
-        r = pearsonr(y_predicted, y_true)[0]
+    def eval_score(self, y_predicted, y_true, filename, correlation_fun):
+        r = correlation_fun(y_predicted, y_true)[0]
         df = pd.DataFrame.from_dict({
             "model": y_predicted,
             "target": y_true
         })
 
         g = sns.jointplot(x="target", y="model", data=df, kind="reg", color="r", size=7)
-        g.savefig(os.path.join('correlation.png'))
+        g.savefig(os.path.join(filename))
         return r
 
 X = []
 Y = []
 with open('../data/train-en-en.in', 'r') as f:
     for line in f.readlines():
-        X.append([i.strip('\n\t ').split(' ') for i in line.split('\t')])
+        X.append([get_words(i.strip('\n\t ')) for i in line.split('\t')])
 
 with open('../data/train-en-en.out', 'r') as f:
     for line in f.readlines():
@@ -269,29 +271,10 @@ model = SVMModel()
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
 model.train(x_train, y_train)
 y_predicted = model.predict(x_test)
-model.eval_score(y_predicted, y_test)
+model.eval_score(y_predicted, y_test, "test_correlation_pearson.png", pearsonr)
+model.eval_score(y_predicted, y_test, "test_correlation_spearman.png", spearmanr)
 
-# voc = {}
-# with open('../train-en-en.in', 'r') as f:
-#     for line in f.readlines():
-#         for word in get_words(line):
-#             voc[wordnet_lemmatizer.lemmatize(word).lower()] = 1
-# print(len(voc))
-#
-# with open('../wiki.en.vec', 'r') as f:
-#     header = True
-#     with open('word_to_vec', 'w') as f1:
-#         while(True):
-#             if not header:
-#                 line = f.readline()
-#                 if line == '':
-#                     break
-#                 args = line.split(' ')
-#                 word = args[0]
-#                 if word.endswith(".") or word.endswith(","):
-#                     word = word[:len(word) - 1]
-#                 if voc.get(word) is not None:
-#                     f1.write(line)
-#             else:
-#                 header = False
-
+# train evaluation
+y_predicted = model.predict(x_train)
+model.eval_score(y_predicted, y_train, "train_correlation_pearson.png", pearsonr)
+model.eval_score(y_predicted, y_train, "train_correlation_spearman.png", spearmanr)
