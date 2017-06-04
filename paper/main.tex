@@ -34,7 +34,7 @@ In this paper we present our work on Semantic Textual Similarity (STS) problem d
 STS measures semantic similarity between two sentences.
 We use two approaches: an SVM model with feature preprocessing and a deep learning model trained on a language modelling task.
 Datasets were obtained using human annotators and their average semantic similarity score is given.
-We use both Pearson and Spearman correlation coefficient in our analysis and achieve 1.000, and 1.000 on our test set respectively.
+We use both Pearson and Spearman correlation coefficient in our analysis and achieve 0.7795, and <TODO> on our test set respectively.
 }
 
 \begin{document}
@@ -258,8 +258,7 @@ All features were preprocessed to zero mean and unit variance. For selection of 
 \[ gamma = \{ 2^{-5}, 2^{-4},..., 2^2 \} \]
 
 \subsubsection{Evaluation}
-Since we used nested cross validation evaluation metrics are averaged over all testing folds. We used R2\footnote{http://scikit-learn.org/stable/modules/generated/sklearn.metrics.r2\_score.html} and Pearson correlation
-\footnote{https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.stats.pearsonr.html} as evaluation metrics. Nested CV scores are dispalyed on following plots:
+Since we used nested cross validation evaluation metrics are averaged over all testing folds. We used R2 and Pearson correlation as evaluation metrics. Nested CV scores are dispalyed on following plots:
 
 
 \begin{figure*}
@@ -308,6 +307,10 @@ score & 0.5898 & 0.7795 \\
 
 
 \section{Conclusion}
+
+As presented in this paper, we tried two way approach, both SVM and deep learning based one. As we're only students, dabbling with NLP giants, our results aren't considerably behind other papers and SemVal winner. Further improvement we see in bigger dataset, combining approaches with model ensables, and even combining various features with CRF, a techinque known for its good performance and resilience to linearly correlated features.
+
+Furthermore additional improvement could be made in bigger model search, both hyperparameters and basic model (e.g. Decision trees regression, logistic regression, etc.) using powerful Bayesian hyperoptimization frameworks such as Hyperopt~\citep{bergstra2013hyperopt}
 
 \bibliographystyle{tar2016}
 \bibliography{tar2016}
