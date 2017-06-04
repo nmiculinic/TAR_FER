@@ -101,8 +101,8 @@ Following two years~\citep{sultan2014dls} and~\citep{sultan2015dls} dominate the
 Our contribution consists of implementation of two machine learning models: SVM model and a deep learning model.
 
 \subsection{Data analysis}
-We used dataset from SemEval 2017 
-Task 1\footnote{http://alt.qcri.org/semeval2017/task1/}. 
+We used dataset from SemEval 2017
+Task 1\footnote{http://alt.qcri.org/semeval2017/task1/}.
 The dataset has 250 instances. Each instance consists of two sentences and our tash is to predict semantic similarity between them. In order to get some deeper insights on data we did some minor data analysis. We got to conclusion that we are dealing with very short text. Also, we concluded that the smaller difference between lengths of sentences is, the more similar they are. This can be seen clearer on following plots.
 
 \begin{table}
@@ -126,12 +126,12 @@ Tokens in sentence & 5.488 & 8.702 \\
         \includegraphics[width=\columnwidth]{sen_len_no_stop.png}
 		\caption{Sentence lengths without stopwords}
     \end{subfigure}%
-    ~ 
+    ~
     \begin{subfigure}[t]{0.5\textwidth}
         \includegraphics[width=\columnwidth]{sen_len_with_stop.png}
 		\caption{Sentence lengths with stopwords}
     \end{subfigure}
-    ~ 
+    ~
     \caption{Sentence length stats}
 \end{figure*}
 
@@ -141,12 +141,12 @@ Tokens in sentence & 5.488 & 8.702 \\
 		\includegraphics[width=\columnwidth]{tokens_no_stop.png}
 		\caption{Number of tokens without stopwords}
     \end{subfigure}
-    ~ 
+    ~
     \begin{subfigure}[t]{0.49\textwidth}
 		\includegraphics[width=\columnwidth]{tokens_with_stop.png}
 		\caption{Number of tokens with stopwords}
     \end{subfigure}
-    ~ 
+    ~
     \caption{Number of tokens stats}
 \end{figure*}
 
@@ -251,7 +251,7 @@ For numbers overlap we define following three feature: $log(1+|N_1|+|N_2|)$, $2\
 where $N_1$ and $N_2$ are sets of numbers in two sentences. We treat all numbers as decimal numbers.
 
 \subsubsection{Model}
-All features were preprocessed with StandardScaler\footnote{http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html}. For selection of best model we used nested cross validation. Both inner and outer CV used 5-Fold cross validation. We optimized following parameters of SVR model:
+All features were preprocessed to zero mean and unit variance. For selection of best model we used nested cross validation, with Grid search in inner folds. Both inner and outer CV used 5-Fold. We optimized following parameters of SVR model:
 
 \[ kernel = \{ linear, rbf \} \]
 \[ C = \{ 2^{-7},2^{-6}, ..., 2^6 \} \]
@@ -269,7 +269,7 @@ Since we used nested cross validation evaluation metrics are averaged over all t
 	\caption{R2 score}
 \end{center}
 \end{figure*}
-    
+
 
 \begin{figure*}
 \begin{center}
