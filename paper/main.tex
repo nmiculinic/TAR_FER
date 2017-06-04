@@ -15,6 +15,7 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{tabularx}
 
 \graphicspath{{img/}}
 
@@ -51,11 +52,11 @@ At the heart of STS, semantic textual similarity, is assigning numerical score o
 STS developed system and techniqus have many further applications, transfer learning of sorts. Machine translation(MT), Summarization, Generation and Question Answering(QA) are some of them. Often new techniques invented in STS context generlize to earlier mentioned domains, as well as NLP fiels as a whole.
 
 
-\begin{table*}
+\begin{table}[h!]
 \caption{STS score description, adapted from~\citep{agirre2016semeval}}
 \label{tab:sts-score}
 \begin{center}
-\begin{tabular}{llr}
+\begin{tabularx}{0.45\textwidth}{llr}
 \toprule
 Score & Explanation\\
 \midrule
@@ -63,30 +64,30 @@ Score & Explanation\\
 & The bird is bathing in the sink\\
 & Birdie is washing itself in the water basin.\\
 \midrule
-4 & \textit{The two sentences are mostly equivalent, but some unimportant details differ}\\
-& In May 2010, the troops attempted to invade
-Kabul. \\
-& The US army invaded Kabul on May 7th last
-year, 2010.\\
+4 & \multicolumn{1}{m{6cm}}{\textit{The two sentences are mostly equivalent, but some unimportant details differ}} \\
+  & \multicolumn{1}{m{6cm}}{In May 2010, the troops attempted to invade
+Kabul.} \\
+& \multicolumn{1}{m{6cm}}{The US army invaded Kabul on May 7th last
+year, 2010.} \\
 \midrule
-3 & \textit{The two sentences are roughly equivalent, but some important information differs/missing.}\\
-& John said he is considered a witness but not a
-suspect.\\
+3 & \multicolumn{1}{m{6cm}}{\textit{The two sentences are roughly equivalent, but some important information differs/missing.}} \\
+  & \multicolumn{1}{m{6cm}}{John said he is considered a witness but not a
+suspect.}\\
 & ``He is not a suspect anymore.'' John said.\\
 \midrule
-2 & \textit{The two sentences are not equivalent, but share some details.} \\
+2 & \multicolumn{1}{m{6cm}}{\textit{The two sentences are not equivalent, but share some details.}} \\
 &They flew out of the nest in groups. \\
 &They flew into the nest together. \\
 \midrule
-1 & \textit{The two sentences are not equivalent, but are on the same topic.}\\
+1 & \multicolumn{1}{m{6cm}}{\textit{The two sentences are not equivalent, but are on the same topic.}}\\
 & The woman is playing the violin.\\
 & The young lady enjoys listening to the guitar.\\
 \midrule
 0 & \textit{The two sentences are completely dissimilar.}\\
-& John went horse back riding at dawn with a whole group of friends.\\
-& Sunrise at dawn is a magnificent view to take in if you wake up early enough for it.\\
+  & \multicolumn{1}{m{6cm}}{John went horse back riding at dawn with a whole group of friends.}\\
+  & \multicolumn{1}{m{6cm}}{Sunrise at dawn is a magnificent view to take in if you wake up early enough for it.}\\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{center}
 \end{table*}
 
@@ -120,7 +121,7 @@ Tokens in sentence & 5.488 & 8.702 \\
 \end{center}
 \end{table}
 
-\begin{figure*}[t!]
+\begin{figure*}[h!]
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \includegraphics[width=\columnwidth]{sen_len_no_stop.png}
@@ -135,7 +136,7 @@ Tokens in sentence & 5.488 & 8.702 \\
     \caption{Sentence length stats}
 \end{figure*}
 
-\begin{figure*}[t!]
+\begin{figure*}[h!]
     \centering
     \begin{subfigure}[t]{0.47\textwidth}
 		\includegraphics[width=\columnwidth]{tokens_no_stop.png}
@@ -261,7 +262,7 @@ All features were preprocessed to zero mean and unit variance. For selection of 
 Since we used nested cross validation evaluation metrics are averaged over all testing folds. We used R2 and Pearson correlation as evaluation metrics. Nested CV scores are dispalyed on following plots:
 
 
-\begin{figure*}
+\begin{figure*}[h!]
 \begin{center}
 	\centering
 	\includegraphics[scale=0.36]{R2.png}
@@ -270,7 +271,7 @@ Since we used nested cross validation evaluation metrics are averaged over all t
 \end{figure*}
 
 
-\begin{figure*}
+\begin{figure*}[h!]
 \begin{center}
 	\centering
 	\includegraphics[scale=0.36]{Pearson.png}
@@ -294,14 +295,38 @@ score & 0.5898 & 0.7795 \\
 
 \subsection{Deep learning}
 
+Deep neural networks have been shown to perform well on language modelling tasks
+(insert citation). Use of highly non-linear functions in the models allows for learning of information on a high level of abstraction. Semantic textual similarity bla bla idem spavat sutra ovo dovrsim.
+
+\subsection{All results}
+
+Table \ref{tab:all_results} shows the performance of all tested models.
+Bla bla we draw some conclusion from this?
+\begin{table}
+	\caption{Model comparison}
+\label{tab:all_results}
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Model & Pearson coefficient \\
+\midrule
+Jaccard similarity & 0.73 \\
+Cosine baseline & 0.73 \\
+LSTM & 0.59 \\
+SVM & 0.78 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
 
 \newpage
 \begin{figure}
-\begin{center}
-\includegraphics[width=\columnwidth]{only_2nd_layer.png}
-\caption{Depiction of blabla}
-\label{fig:lstm_2nd_layer}
-\end{center}
+	\begin{center}
+	\includegraphics[width=\columnwidth]{only_2nd_layer.png}
+	\caption{Depiction of blabla}
+	\label{fig:lstm_2nd_layer}
+	\end{center}
 \end{figure}
 
 
