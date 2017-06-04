@@ -5,14 +5,16 @@ import os
 import seaborn as sns
 import pandas as pd
 from nltk.corpus.reader import WordNetError
+from sklearn.metrics import r2_score, make_scorer
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.model_selection import GridSearchCV, train_test_split, cross_val_score, KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
 from nltk.stem import WordNetLemmatizer
 from nltk import FreqDist
 from nltk.corpus import brown, wordnet
 from scipy.stats import pearsonr, spearmanr
+from matplotlib import pyplot as plt
 
 
 wordnet_lemmatizer = WordNetLemmatizer()
@@ -97,7 +99,7 @@ def get_numbers_feature(sentence1, sentence2):
 def get_shallow_features(sentence):
     counter = 0
     for word in sentence:
-        if len(word) > 1 and re.match("[A-Z].*]", word):
+        if len(word) > 1 and (re.match("[A-Z].*]", word) or re.match("\.[A-Z]+]", word)):
             counter += 1
     return counter
 
@@ -146,7 +148,7 @@ def harmonic_mean(s1, s2):
 
 
 def get_wordnet_pos(treebank_tag):
-    if treebank_tag.startswith('V'):
+    if treebank_tag.startswith('A') or treebank_tag.startswith('JJ'):
         return wordnet.ADJ
     elif treebank_tag.startswith('V'):
         return wordnet.VERB
@@ -160,7 +162,7 @@ def get_wordnet_pos(treebank_tag):
 
 def get_synset(word):
     try:
-        return wordnet.synset(word + "." + get_wordnet_pos(tagger(word)[0][1]) + ".01")
+        return wordnet.synset(word + "." + get_wordnet_pos(tagger([word])[0][1]) + ".01")
     except (WordNetError, IndexError):
         return 0
 
@@ -218,6 +220,75 @@ def feature_vector(a, b):
     return fvec
 
 
+def pearson(y_true, y_predicted):
+    return pearsonr(y_true, y_predicted)[0]
+
+
+def nested_cv(name, scorer=None):
+    train_x = []
+    train_y = []
+    with open('../data/train-en-en.in', 'r') as f:
+        for line in f.readlines():
+            train_x.append([get_words(i.strip('\n\t ')) for i in line.split('\t')])
+
+    with open('../data/train-en-en.out', 'r') as f:
+        for line in f.readlines():
+            train_y.append(float(line.strip(' ')))
+
+    NUM_TRIALS = 30
+    new_train = []
+    for i in train_x:
+        new_train.append(np.array(feature_vector(i[0], i[1]), dtype=np.float64))
+    scaler = StandardScaler()
+    parameters = {'kernel': ['linear', 'rbf'], 'C': [2 ** i for i in range(-7, 7)],
+                  'gamma': [10 ** i for i in range(-5, 3)]}
+
+    new_train = scaler.fit_transform(new_train)
+    # non_nested_scores = np.zeros(NUM_TRIALS)
+    nested_scores = np.zeros(NUM_TRIALS)
+
+    for i in range(NUM_TRIALS):
+        print(i)
+        inner_cv = KFold(n_splits=5, shuffle=True, random_state=i)
+        outer_cv = KFold(n_splits=5, shuffle=True, random_state=i)
+
+        clf = GridSearchCV(SVR(), parameters, n_jobs=-1, cv=inner_cv, scoring=scorer)
+        # clf.fit(new_train, train_y)
+        # non_nested_scores[i] = clf.best_score_
+
+        nested_score = cross_val_score(clf, X=new_train, y=train_y, cv=outer_cv)
+        nested_scores[i] = nested_score.mean()
+
+    # score_difference = non_nested_scores - nested_scores
+    # print("Average difference of {0:6f} with std. dev. of {1:6f}."
+    #       .format(score_difference.mean(), score_difference.std()))
+
+    # print("Average non-nested: ", np.mean(non_nested_scores))
+    print("Average nested: ", np.mean(nested_scores))
+
+    # Plot scores on each trial for nested and non-nested CV
+    plt.figure()
+    # plt.subplot(211)
+    # non_nested_scores_line, = plt.plot(non_nested_scores, color='r')
+    nested_line, = plt.plot(nested_scores, color='b')
+    plt.ylabel("score", fontsize="14")
+    plt.legend([nested_line],
+               [name],
+               bbox_to_anchor=(0, .4, .5, 0))
+    plt.title("Nested Cross Validation " + name + " score",
+              x=.5, y=1.1, fontsize="15")
+
+    # Plot bar chart of the difference.
+    # plt.subplot(212)
+    # difference_plot = plt.bar(range(NUM_TRIALS), score_difference)
+    plt.xlabel("Individual Trial #")
+    # plt.legend([difference_plot],
+    #            ["Non-Nested CV - Nested CV " + name + " score"],
+    #            bbox_to_anchor=(0, 1, .8, 0))
+    # plt.ylabel("score difference", fontsize="14")
+    plt.show()
+
+
 class SVMModel:
     porter = nltk.PorterStemmer()
     model = None
@@ -230,11 +301,12 @@ class SVMModel:
         self.scaler = StandardScaler()
         parameters = {'kernel': ['linear', 'rbf'], 'C': [2 ** i for i in range(-7, 7)],
                       'gamma': [10 ** i for i in range(-5, 3)]}
-        svc = GridSearchCV(SVR(), parameters, n_jobs=-1, cv=5)
+        svc = GridSearchCV(SVR(), parameters, n_jobs=-1, cv=KFold(n_splits=5, shuffle=True, random_state=42))
 
         svc.fit(self.scaler.fit_transform(new_train), train_y)
         self.model = svc.best_estimator_
-        print(svc.get_params())
+        print(svc.best_estimator_.get_params())
+        print("#"*50)
 
     def predict(self, x):
         predictions = []
@@ -244,7 +316,7 @@ class SVMModel:
 
     def predict_one(self, x):
         fvec = feature_vector(x[0], x[1])
-        return self.model.predict(self.scaler.transform(fvec))
+        return self.model.predict(self.scaler.transform(np.array(fvec).reshape(1, -1)))
 
     def eval_score(self, y_predicted, y_true, filename, correlation_fun):
         r = correlation_fun(y_predicted, y_true)[0]
@@ -257,24 +329,69 @@ class SVMModel:
         g.savefig(os.path.join(filename))
         return r
 
-X = []
-Y = []
-with open('../data/train-en-en.in', 'r') as f:
-    for line in f.readlines():
-        X.append([get_words(i.strip('\n\t ')) for i in line.split('\t')])
 
-with open('../data/train-en-en.out', 'r') as f:
-    for line in f.readlines():
-        Y.append(float(line.strip(' ')))
+def custom_cv():
+    X = []
+    Y = []
+    with open('../data/train-en-en.in', 'r') as f:
+        for line in f.readlines():
+            X.append([get_words(i.strip('\n\t ')) for i in line.split('\t')])
 
-model = SVMModel()
-x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
-model.train(x_train, y_train)
-y_predicted = model.predict(x_test)
-model.eval_score(y_predicted, y_test, "test_correlation_pearson.png", pearsonr)
-model.eval_score(y_predicted, y_test, "test_correlation_spearman.png", spearmanr)
+    with open('../data/train-en-en.out', 'r') as f:
+        for line in f.readlines():
+            Y.append(float(line.strip(' ')))
 
-# train evaluation
-y_predicted = model.predict(x_train)
-model.eval_score(y_predicted, y_train, "train_correlation_pearson.png", pearsonr)
-model.eval_score(y_predicted, y_train, "train_correlation_spearman.png", spearmanr)
+    # nested_cv(X, Y)
+    train_scores = []
+    test_scores = []
+    train_test_differences = []
+    for i in range(30):
+        print(i)
+        model = SVMModel()
+        x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
+        model.train(x_train, y_train)
+        y_predicted = model.predict(x_test)
+        # model.eval_score(y_predicted, y_test, "test_correlation_pearson.png", pearsonr)
+        # test_score = pearsonr(y_predicted, y_test)[0]
+        test_score = r2_score(y_test, y_predicted)
+        test_scores.append(test_score)
+
+        # train evaluation
+        y_predicted = model.predict(x_train)
+        # model.eval_score(y_predicted, y_train, "train_correlation_pearson.png", pearsonr)
+        # train_score = pearsonr(y_predicted, y_train)[0]
+        train_score = r2_score(y_train, y_predicted)
+        train_scores.append(train_score)
+        train_test_differences.append(abs(train_score - test_score))
+
+    # first nested cv
+    # Average difference of 0.005461 with std. dev. of 0.002443.
+
+    plt.figure()
+    plt.subplot(211)
+    non_nested_scores_line, = plt.plot(train_scores, color='r')
+    nested_line, = plt.plot(test_scores, color='b')
+    plt.ylabel("score", fontsize="14")
+    plt.legend([non_nested_scores_line, nested_line],
+               ["Non-Nested CV", "Nested CV"],
+               bbox_to_anchor=(0, .4, .5, 0))
+    plt.title("Non-Nested and Nested Cross Validation",
+              x=.5, y=1.1, fontsize="15")
+
+    # Plot bar chart of the difference.
+    plt.subplot(212)
+    difference_plot = plt.bar(range(30), train_test_differences)
+    plt.xlabel("Individual Trial #")
+    plt.legend([difference_plot],
+               ["Non-Nested CV - Nested CV Score"],
+               bbox_to_anchor=(0, 1, .8, 0))
+    plt.ylabel("score difference", fontsize="14")
+    plt.show()
+    print("Average train: ", np.mean(train_scores))
+    print("Average test: ", np.mean(test_scores))
+
+print("Pearson")
+nested_cv("Pearson", make_scorer(pearson))
+
+print("R2")
+nested_cv("R2")
