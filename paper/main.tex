@@ -52,51 +52,51 @@ We use Pearson correlation coefficient in our analysis and achieve 0.7795 on our
 Two dogs play in the grass.
 Two dogs playing in the snow.
 \end{verbatim}
-At the heart of STS, semantic textual similarity, is assigning numerical score on two text similarity. By text, it could mean full document, paragraph, or in this paper's case only one sentence. Beginning quote showcases one such sentance pairs, where human annotators rated 2.8 semantically similar on 0-5 scale, where 0 mean full semantic dissimilarity, and 5 full equivalence with various shades in between. Full score semantics you can read in table~\ref{tab:sts-score}
+At the heart of STS, semantic textual similarity, is assigning numerical score on two text similarity. By text, it could mean full document, paragraph, or in this paper's case only one sentence. Beginning quote showcases one such sentance pairs, where human annotators rated 2.8 semantically similar on 0-5 scale, where 0 mean full semantic dissimilarity, and 5 full equivalence with various shades in between. % Full score semantics you can read in table~\ref{tab:sts-score}
 STS developed system and techniqus have many further applications, transfer learning of sorts. Machine translation(MT), Summarization, Generation and Question Answering(QA) are some of them. Often new techniques invented in STS context generlize to earlier mentioned domains, as well as NLP fiels as a whole.
 
 
-\begin{table}[h!]
-\caption{STS score description, adapted from~\citep{agirre2016semeval}}
-\label{tab:sts-score}
-\begin{center}
-	\resizebox{\columnwidth}{!}{
-\begin{tabularx}{\columnwidth}{llr}
-\toprule
-Score & Explanation\\
-\midrule
-5 & \textit{Two sentences are completely equivalent}\\
-& The bird is bathing in the sink\\
-& Birdie is washing itself in the water basin.\\
-\midrule
-4 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are mostly equivalent, but some unimportant details differ}} \\
-  & \multicolumn{1}{m{6.5cm}}{In May 2010, the troops attempted to invade
-Kabul.} \\
-& \multicolumn{1}{m{6.5cm}}{The US army invaded Kabul on May 7th last
-year, 2010.} \\
-\midrule
-3 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are roughly equivalent, but some important information differs/missing.}} \\
-  & \multicolumn{1}{m{6cm}}{John said he is considered a witness but not a
-suspect.}\\
-& ``He is not a suspect anymore.'' John said.\\
-\midrule
-2 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are not equivalent, but share some details.}} \\
-&They flew out of the nest in groups. \\
-&They flew into the nest together. \\
-\midrule
-1 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are not equivalent, but are on the same topic.}}\\
-& The woman is playing the violin.\\
-& The young lady enjoys listening to the guitar.\\
-\midrule
-0 & \textit{The two sentences are completely dissimilar.}\\
-  & \multicolumn{1}{m{6.5cm}}{John went horse back riding at dawn with a whole group of friends.}\\
-  & \multicolumn{1}{m{6.5cm}}{Sunrise at dawn is a magnificent view to take in if you wake up early enough for it.}\\
-\bottomrule
-\end{tabularx}
-}
-\end{center}
-\end{table*}
-
+% \begin{table}[h!]
+% \caption{STS score description, adapted from~\citep{agirre2016semeval}}
+% \label{tab:sts-score}
+% \begin{center}
+% 	\resizebox{\columnwidth}{!}{
+% \begin{tabularx}{\columnwidth}{llr}
+% \toprule
+% Score & Explanation\\
+% \midrule
+% 5 & \textit{Two sentences are completely equivalent}\\
+% & The bird is bathing in the sink\\
+% & Birdie is washing itself in the water basin.\\
+% \midrule
+% 4 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are mostly equivalent, but some unimportant details differ}} \\
+%   & \multicolumn{1}{m{6.5cm}}{In May 2010, the troops attempted to invade
+% Kabul.} \\
+% & \multicolumn{1}{m{6.5cm}}{The US army invaded Kabul on May 7th last
+% year, 2010.} \\
+% \midrule
+% 3 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are roughly equivalent, but some important information differs/missing.}} \\
+%   & \multicolumn{1}{m{6cm}}{John said he is considered a witness but not a
+% suspect.}\\
+% & ``He is not a suspect anymore.'' John said.\\
+% \midrule
+% 2 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are not equivalent, but share some details.}} \\
+% &They flew out of the nest in groups. \\
+% &They flew into the nest together. \\
+% \midrule
+% 1 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are not equivalent, but are on the same topic.}}\\
+% & The woman is playing the violin.\\
+% & The young lady enjoys listening to the guitar.\\
+% \midrule
+% 0 & \textit{The two sentences are completely dissimilar.}\\
+%   & \multicolumn{1}{m{6.5cm}}{John went horse back riding at dawn with a whole group of friends.}\\
+%   & \multicolumn{1}{m{6.5cm}}{Sunrise at dawn is a magnificent view to take in if you wake up early enough for it.}\\
+% \bottomrule
+% \end{tabularx}
+% }
+% \end{center}
+% \end{table*}
+% 
 \section{Related work}
 
 STS has short and fruitful history, one with many ideas flying around. In its current form it appeared in 2012, on SemVal~\citep{agirre2012semeval} as task 6.  In 2012, the best system~\citep{bar2012ukp} used lexical similarity and Explicit Semantic Analysis(ESA)~\citep{gabrilovich2007computing}. Following year Latent Semantic Analysis(LSA)~\citep{deerwester1990indexing} model~\citep{han2013umbc} with additional external information sources, WordNet and n-gram matching technique.
