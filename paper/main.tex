@@ -21,7 +21,7 @@
 
 \title{Semantic Textual Similarity using deep learning}
 
-\name{Bruno Gavranovic, Neven Miculinic, Stipan Mikulic}
+\name{Bruno Gavranović, Neven Miculinić, Stipan Mikulić}
 
 \address{
 University of Zagreb, Faculty of Electrical Engineering and Computing\\
@@ -182,8 +182,35 @@ Tokens in sentence & 5.488 & 8.702 \\
 %\label{fig:lstm_2nd_layer}
 %\end{center}
 %\end{figure}
+\subsection{Baseline models}
 
-\newpage
+To get an idea of how well our models perform, we used two baseline models.
+Neither of them is a machine learning model; in other words, they do not learn from data, but are rather simple statistics measures.
+
+\subsubsection{Jaccard similarity baseline}
+
+One of the simplest approaches to measuring semantic similarity is the Jaccard rindex.
+It is a statistic used for comparing similarity and diversity of finite sets.
+Let $J(S_1, S_2)$ represent the Jaccard index between two sentences $S_1$ and $S_2$.
+The similariy between sentences is defined as:
+\begin{equation}
+	\label{eq:jaccard}
+	J(S_1, S_2) = \frac{|S_1 \cap S_2|}{|S_1 \cup S_2|},
+\end{equation}
+
+where the elements of $S_1$ and $S_2$ are their words, in lowercase.
+
+\subsubsection{Cosine similarity}
+
+Unlike in the encodings of images, necessary information to decode the data is \textit{not} stored in the encodings of words.
+Natural language is encoded in arbitrary sequences of symbols and provides no useful information to the model regarding the relationships that may exist between various concepts.
+One method that is effectively captures the semantic meaning behind the various concepts are the word embeddings.
+
+Simple approach to extending the word embedding system to a sentence is simply performing some aggregation operation on each of the embeddings.
+We used the summation function aggregation on the words of the sentence, after removing stopwords.
+Stopwords list is used from the NLTK library.
+Word embedding used is the English version of the FastText word embeddings \citep{joulin2016fasttext}.
+
 \subsection{SVM}
 
 \subsubsection{Features}
