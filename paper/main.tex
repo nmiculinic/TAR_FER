@@ -351,28 +351,54 @@ Such high level generalization could be considered as actual \textit{understandi
 
 A step forward to a model which could provide strong generalization capabilities is the one that has little to none domain specific knowledge embedded inside it and one which has no feature engineering.
 
-One of such models are deep neural networks.
+One other way to tackle the problem is from bottom up: by modelling compositions of constituents of the language on various levels of abstractions: characters, words, sentences.
+
+Although vector embeddings seem like a natural way to capture meaning on a word level, capturing composition of words within a sentence is a more difficult problem.
+Summation as an aggregation function doesn't effectively model semantic composition within a sentence.
+It is also invariant to word order within a sentence, while the meaning isn't.
+For example, changing the position of a negation within a sentence changes the meaning, but not the sum.
+
+All of those ideas and problems are a motivation for applying a deep neural network on this task.
 
 In this paper, one specific instance of such a model is explored: character-level language modelling with deep recurrent neural networks.
 
-\subsubsection{LSTM networks}
+\subsubsection{Recurrent networks}
 
-Other than human brains, No known models are able to generalize well to such 
+The idea is to apply unsupervised learning with recurrent neural networks to learn a useful model of the language, which could then be used on the semantic similarity problem.
+In other words, we trained the model on a large corpus of text and used transfer learning to use the same trained network on STS.
 
-Although word embeddings are, in theory, more robust to simple word changes,
+We trained a Long short-term memory network \citep{LSTM} on a task of predicting the next character in the complete NLTK Gutenberg corpus. 
+We used a two-layer LSTM cell with 512 size of memory and cross entropy loss on the softmax outputs.
+It is possible to generate arbitrary text with such a trained LSTM network by sampling from the predicted character probability distribution and feeding back that sample to the network. One such sample on a trained network is shown in the \ref{tab:sample_output}.
 
+\begin{table}
+\caption{Sample network output}
+\label{tab:sample_output}
+\begin{center}
+\begin{tabular}{c}
+\toprule
+Sample output of the LSTM \\
+\midrule
+\multicolumn{1}{m{6.5cm}}{Little Joe Otter had had no honour pointing to help him so that they
+heard of his own fish.  And it was for the beginning of the Little Fir Tree and
+scrambled to the sheep. 
+Come, let us go and let the right out of this tree, and the LORD had chanced
+to the next tabernacce of Mischians, when the king was carried the short of the children of the Green.}
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
 
-
-Deep neural networks have been shown to perform well on language modelling tasks
-(insert citation). 
-The non-linear nature of neural networks allows them to model concepts on a high level of abstraction.
-
-Semantic textual similarity exactly that: modelling similarity between concepts that are not shallow, like numbe
+Since the network learns an internal representation of the natural language, it is possible to extract the final hidden state of the network and use it as an embedding of the sentence that was fed in as the input.
+To put it in perspective, LSTM here serves as an aggregation function for the one-hot embeddings of the characters.
+It is not invariant to position like the summation, but it doesn't perform well compared to our SVM model. 
+Figure \ref{fig:lstm_corr.png} shows the joint plot of LSTM network.
 
 \subsection{All results}
 
 Table \ref{tab:all_results} shows the performance of all tested models.
-Bla bla we draw some conclusion from this?
+SVM greatly outperforms all other models.
+
 \begin{table}
 	\caption{Model comparison}
 \label{tab:all_results}
@@ -383,7 +409,7 @@ Model & Pearson coefficient \\
 \midrule
 Jaccard similarity & 0.73 \\
 Cosine baseline & 0.73 \\
-LSTM & 0.59 \\
+LSTM & 0.61 \\
 SVM & 0.78 \\
 \bottomrule
 \end{tabular}
@@ -394,9 +420,9 @@ SVM & 0.78 \\
 \newpage
 \begin{figure}
 	\begin{center}
-	\includegraphics[width=\columnwidth]{only_2nd_layer.png}
-	\caption{Depiction of blabla}
-	\label{fig:lstm_2nd_layer}
+	\includegraphics[width=\columnwidth]{lstm_corr.png}
+	\caption{Depiction of assigned similarity measure by LSTM language model}
+	\label{fig:lstm_corr}
 	\end{center}
 \end{figure}
 
@@ -405,6 +431,9 @@ SVM & 0.78 \\
 \section{Conclusion}
 
 As presented in this paper, we tried two way approach, both SVM and deep learning based one. As we're only students, dabbling with NLP giants, our results aren't considerably behind other papers and SemVal winner. Further improvement we see in bigger dataset, combining approaches with model ensables, and even combining various features with CRF, a techinque known for its good performance and resilience to linearly correlated features.
+
+Deep neural network approach could be improved by modelling the language on various levels, not just character levels. 
+Word embeddings and other network architectures could be utilized to gain additional performance gains.
 
 Furthermore additional improvement could be made in bigger model search, both hyperparameters and basic model (e.g. Decision trees regression, logistic regression, etc.) using powerful Bayesian hyperoptimization frameworks such as Hyperopt~\citep{bergstra2013hyperopt}
 
