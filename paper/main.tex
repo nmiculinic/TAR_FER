@@ -15,12 +15,17 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{listings}
+\lstset{
+   breaklines=true,
+   basicstyle=\ttfamily}
 
 \graphicspath{{img/}}
 
 \title{Semantic Textual Similarity using deep learning}
 
-\name{Bruno Gavranovic, Neven Miculinic, Stipan Mikulic}
+\name{Bruno Gavranović, Neven Miculinić, Stipan Mikulić}
 
 \address{
 University of Zagreb, Faculty of Electrical Engineering and Computing\\
@@ -51,11 +56,12 @@ At the heart of STS, semantic textual similarity, is assigning numerical score o
 STS developed system and techniqus have many further applications, transfer learning of sorts. Machine translation(MT), Summarization, Generation and Question Answering(QA) are some of them. Often new techniques invented in STS context generlize to earlier mentioned domains, as well as NLP fiels as a whole.
 
 
-\begin{table*}
+\begin{table}[h!]
 \caption{STS score description, adapted from~\citep{agirre2016semeval}}
 \label{tab:sts-score}
 \begin{center}
-\begin{tabular}{llr}
+	\resizebox{\columnwidth}{!}{
+\begin{tabularx}{\columnwidth}{llr}
 \toprule
 Score & Explanation\\
 \midrule
@@ -63,30 +69,31 @@ Score & Explanation\\
 & The bird is bathing in the sink\\
 & Birdie is washing itself in the water basin.\\
 \midrule
-4 & \textit{The two sentences are mostly equivalent, but some unimportant details differ}\\
-& In May 2010, the troops attempted to invade
-Kabul. \\
-& The US army invaded Kabul on May 7th last
-year, 2010.\\
+4 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are mostly equivalent, but some unimportant details differ}} \\
+  & \multicolumn{1}{m{6.5cm}}{In May 2010, the troops attempted to invade
+Kabul.} \\
+& \multicolumn{1}{m{6.5cm}}{The US army invaded Kabul on May 7th last
+year, 2010.} \\
 \midrule
-3 & \textit{The two sentences are roughly equivalent, but some important information differs/missing.}\\
-& John said he is considered a witness but not a
-suspect.\\
+3 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are roughly equivalent, but some important information differs/missing.}} \\
+  & \multicolumn{1}{m{6cm}}{John said he is considered a witness but not a
+suspect.}\\
 & ``He is not a suspect anymore.'' John said.\\
 \midrule
-2 & \textit{The two sentences are not equivalent, but share some details.} \\
+2 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are not equivalent, but share some details.}} \\
 &They flew out of the nest in groups. \\
 &They flew into the nest together. \\
 \midrule
-1 & \textit{The two sentences are not equivalent, but are on the same topic.}\\
+1 & \multicolumn{1}{m{6.5cm}}{\textit{The two sentences are not equivalent, but are on the same topic.}}\\
 & The woman is playing the violin.\\
 & The young lady enjoys listening to the guitar.\\
 \midrule
 0 & \textit{The two sentences are completely dissimilar.}\\
-& John went horse back riding at dawn with a whole group of friends.\\
-& Sunrise at dawn is a magnificent view to take in if you wake up early enough for it.\\
+  & \multicolumn{1}{m{6.5cm}}{John went horse back riding at dawn with a whole group of friends.}\\
+  & \multicolumn{1}{m{6.5cm}}{Sunrise at dawn is a magnificent view to take in if you wake up early enough for it.}\\
 \bottomrule
-\end{tabular}
+\end{tabularx}
+}
 \end{center}
 \end{table*}
 
@@ -120,7 +127,7 @@ Tokens in sentence & 5.488 & 8.702 \\
 \end{center}
 \end{table}
 
-\begin{figure*}[t!]
+\begin{figure*}[h!]
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \includegraphics[width=\columnwidth]{sen_len_no_stop.png}
@@ -135,7 +142,7 @@ Tokens in sentence & 5.488 & 8.702 \\
     \caption{Sentence length stats}
 \end{figure*}
 
-\begin{figure*}[t!]
+\begin{figure*}[h!]
     \centering
     \begin{subfigure}[t]{0.47\textwidth}
 		\includegraphics[width=\columnwidth]{tokens_no_stop.png}
@@ -181,8 +188,35 @@ Tokens in sentence & 5.488 & 8.702 \\
 %\label{fig:lstm_2nd_layer}
 %\end{center}
 %\end{figure}
+\subsection{Baseline models}
 
-\newpage
+To get an idea of how well our models perform, we used two baseline models.
+Neither of them is a machine learning model; in other words, they do not learn from data, but are rather simple statistics measures.
+
+\subsubsection{Jaccard similarity baseline}
+
+One of the simplest approaches to measuring semantic similarity is the Jaccard index.
+It is a statistic used for comparing similarity and diversity of finite sets.
+Let $J(S_1, S_2)$ represent the Jaccard index between two sentences $S_1$ and $S_2$.
+The similariy between sentences is defined as:
+\begin{equation}
+	\label{eq:jaccard}
+	J(S_1, S_2) = \frac{|S_1 \cap S_2|}{|S_1 \cup S_2|},
+\end{equation}
+
+where the elements of $S_1$ and $S_2$ are their words, in lowercase.
+
+\subsubsection{Cosine similarity}
+
+Unlike in the encodings of images, necessary information to decode the data is \textit{not} stored in the encodings of words.
+Natural language is encoded in arbitrary sequences of symbols and provides no useful information to the model regarding the relationships that may exist between various concepts.
+One method that is effectively captures the semantic meaning behind the various concepts are the word embeddings.
+
+Simple approach to extending the word embedding system to a sentence is simply performing some aggregation operation on each of the embeddings and then performing the cosine similarity measure.
+We used the summation function aggregation on the words of the sentence, after removing stopwords.
+Stopwords list is used from the NLTK library.
+Word embedding used is the English version of the FastText word embeddings \citep{joulin2016fasttext}.
+
 \subsection{SVM}
 
 \subsubsection{Features}
@@ -261,7 +295,7 @@ All features were preprocessed to zero mean and unit variance. For selection of 
 Since we used nested cross validation evaluation metrics are averaged over all testing folds. We used R2 and Pearson correlation as evaluation metrics. Nested CV scores are dispalyed on following plots:
 
 
-\begin{figure*}
+\begin{figure*}[h!]
 \begin{center}
 	\centering
 	\includegraphics[scale=0.36]{R2.png}
@@ -270,7 +304,7 @@ Since we used nested cross validation evaluation metrics are averaged over all t
 \end{figure*}
 
 
-\begin{figure*}
+\begin{figure*}[h!]
 \begin{center}
 	\centering
 	\includegraphics[scale=0.36]{Pearson.png}
@@ -295,14 +329,76 @@ std & 0.011393 & 0.006625 \\
 
 \subsection{Deep learning}
 
+\subsubsection{Motivation}
+Although feature engineering measures are able to provide an approximate measure of similarity, it is trivial to reverse-engineer adversarial examples that completely break the system.
+Consider, for example, two following sentences:
+
+\begin{lstlisting}
+Compared to me, he's heavier.
+I have less kilograms than him.
+\end{lstlisting}
+
+Although their Jaccard index is zero (they share no common words), their semantic similarity is high.
+
+Similar examples can easily be generated by replacing any specific word with its definition:
+\begin{lstlisting}
+Backpropagation.
+Reverse-mode automatic differentiation.
+\end{lstlisting}
+
+Concepts on a such high level of abstraction easily break even the strongest systems since new word definitions could be defined arbitrarily.
+No known models are able to generalize well to strong adversarial examples in an arbitrary language. 
+Such high level generalization could be considered as actual \textit{understanding} of the natural language, which is an AI-complete problem.
+
+A step forward to a model which could provide strong generalization capabilities is the one that has little to none domain specific knowledge embedded inside it and one which has no feature engineering.
+
+One of such models are deep neural networks.
+
+In this paper, one specific instance of such a model is explored: character-level language modelling with deep recurrent neural networks.
+
+\subsubsection{LSTM networks}
+
+Other than human brains, No known models are able to generalize well to such 
+
+Although word embeddings are, in theory, more robust to simple word changes,
+
+
+
+Deep neural networks have been shown to perform well on language modelling tasks
+(insert citation). 
+The non-linear nature of neural networks allows them to model concepts on a high level of abstraction.
+
+Semantic textual similarity exactly that: modelling similarity between concepts that are not shallow, like numbe
+
+\subsection{All results}
+
+Table \ref{tab:all_results} shows the performance of all tested models.
+Bla bla we draw some conclusion from this?
+\begin{table}
+	\caption{Model comparison}
+\label{tab:all_results}
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+Model & Pearson coefficient \\
+\midrule
+Jaccard similarity & 0.73 \\
+Cosine baseline & 0.73 \\
+LSTM & 0.59 \\
+SVM & 0.78 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
 
 \newpage
 \begin{figure}
-\begin{center}
-\includegraphics[width=\columnwidth]{only_2nd_layer.png}
-\caption{Depiction of blabla}
-\label{fig:lstm_2nd_layer}
-\end{center}
+	\begin{center}
+	\includegraphics[width=\columnwidth]{only_2nd_layer.png}
+	\caption{Depiction of blabla}
+	\label{fig:lstm_2nd_layer}
+	\end{center}
 \end{figure}
 
 
