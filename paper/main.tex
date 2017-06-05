@@ -370,7 +370,9 @@ In other words, we trained the model on a large corpus of text and used transfer
 
 We trained a Long short-term memory network \citep{LSTM} on a task of predicting the next character in the complete NLTK Gutenberg corpus. 
 We used a two-layer LSTM cell with 512 size of memory and cross entropy loss on the softmax outputs.
-It is possible to generate arbitrary text with such a trained LSTM network by sampling from the predicted character probability distribution and feeding back that sample to the network. One such sample on a trained network is shown in the \ref{tab:sample_output}.
+25\% of the NLTK corpus was used as test data. Early stopping was used as an implicit method of regularizing.
+It is possible to generate arbitrary text with such a trained LSTM network by sampling from the predicted character probability distribution and feeding back that sample to the network. 
+One such sample on a trained network is shown in the \ref{tab:sample_output} and it helps show, subjectively, the level of comprehension LSTM has of the natural language.
 
 \begin{table}
 \caption{Sample network output}
@@ -391,9 +393,11 @@ to the next tabernacce of Mischians, when the king was carried the short of the 
 \end{table}
 
 Since the network learns an internal representation of the natural language, it is possible to extract the final hidden state of the network and use it as an embedding of the sentence that was fed in as the input.
-To put it in perspective, LSTM here serves as an aggregation function for the one-hot embeddings of the characters.
-It is not invariant to position like the summation, but it doesn't perform well compared to our SVM model. 
-Figure \ref{fig:lstm_corr.png} shows the joint plot of LSTM network.
+To put it in perspective, LSTM here serves as an aggregation function for the one-hot embeddings of the characters. 
+It has the useful property of not being invariant to the position of characters.
+The final state of first sentence is then compared to the final state of the second sentence using the cosine similarity. 
+In the case of a deep network, like the one we used, only the last layer's final state was used.
+Figure \ref{fig:lstm_corr} shows the joint plot of LSTM network.
 
 \subsection{All results}
 
