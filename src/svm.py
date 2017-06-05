@@ -265,7 +265,7 @@ def nested_cv(name, scorer=None):
 
     # print("Average non-nested: ", np.mean(non_nested_scores))
     print("Average nested: ", np.mean(nested_scores))
-
+    print("Std nested: ", np.std(nested_scores))
     # Plot scores on each trial for nested and non-nested CV
     plt.figure()
     # plt.subplot(211)
